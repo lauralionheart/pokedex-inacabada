@@ -1,0 +1,62 @@
+
+<script setup>
+    import{useRoute} from 'vue-router'
+    import{reactive,toRefs,computed} from 'vue'
+
+    const route = useRoute(); //para poder capturar el id que pasamos en los parametros
+    const pokemonId = route.params.id; //obtenemos el parametro reactivo de la ruta 
+    const state = reactive({
+
+        pokemon: null,
+        stats:computed(()=>filterStats()), //stats dependera de una funcion
+        types:computed(()=>filterType()),
+    })
+
+    function filterStats(){
+        if(state.pokemon){
+            return state.pokemon.stats.map((stat)=> stat.base_stat)
+        }
+    }
+    function filterType(){
+        if(state.pokemon){
+            return state.pokemon.types.map((type)=> type.type.name)
+        }
+    }
+
+    const {pokemon,stats,types} = toRefs(state)
+
+    fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
+    .then((res)=>res.json())
+    .then((data)=>{
+        console.log(data)
+        state.pokemon = data;
+    })
+</script>
+
+
+<template>
+
+    <div>
+        
+        <div v-if="pokemon">
+            <div class="w-4/6 mx-auto rounded-xl p-10 shadow-lg">
+                <h1 class="font-black md:text-3xl text-xl text-red-900 mb-2">{{ pokemon.name }}</h1>
+                <span v-for="type in types" class="py-1 px-2 shadow-md rounded-full bg-red-500 text-white font-semibold mr-2 mt-3">
+                    {{ type }}
+                </span>
+                
+                
+                {{ stats }}
+                
+                <img :src="pokemon.sprites.front_default" :alt="`nombre de ${pokemon.name}`">
+            </div>
+
+        </div>
+        <div v-else>
+            <p>No hay informacion</p>
+        </div>
+        <router-link to ="/">Home</router-link>
+
+    </div>
+
+</template>
