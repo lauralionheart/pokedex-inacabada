@@ -7,13 +7,18 @@ import Details from '../pages/Details.vue';
 
 const routes = [
 
-    {path: '/',
-     component: Home,   
-    },
+    {
+        path: '/',
+        component: Home,
+        children: [
+            {   
+                path: '/details/:id',    //parametro dinamico id
+                component: Details   
+            }
+        ]   
+    }
 
-    {path: '/details/:id',    //parametro dinamico id
-    component: Details,   
-    },
+    
 ]
 
 //Ahora hay que crear el router

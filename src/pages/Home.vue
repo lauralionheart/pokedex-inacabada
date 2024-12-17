@@ -1,17 +1,23 @@
 
 <script setup>
-    import {reactive,toRefs} from 'vue'
+    import {reactive,toRefs,computed} from 'vue'
 
     const state = reactive({
 
-        pokemons:[]
-
+        pokemons:[],
+        name:'',
+        filterPokemon:computed(()=>searchPokemon())
 
 
     })
 
+    function searchPokemon(){
+        return state.pokemons.filter((pokemon)=>pokemon.name.includes(state.name.toLowerCase()))
+
+    }
+
     //Queremos utilizar la propiedad pokemons sin que se pierda la reactividad (toRefs)
-    const {pokemons} = toRefs(state);
+    const {name,filterPokemon} = toRefs(state);
     //Conectamos con la API de la pokeapi
 try {
     fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
@@ -43,16 +49,30 @@ try {
 <template>
 
     <div>
-        <h1>Home</h1>
+        <div class="grid grid-cols-6 gap-1">
+            <div class="col-span-1">
+                <input type="text"
+                placeholder="Nombre del pokemon"
+                class="mb-3 p-2 border-black-500 border-2 w-100 "
+                v-model="name"
+                >
+                
+                <ul>
+                    <li v-for="pokemon in filterPokemon" :key="pokemon.index"
+                    class ="p-2 rounded hover:text-red-400 hover:bg-red-100"
+                    >
+                    <span class="text-sm font-normal text-gray-500 mr-3">#{{ pokemon.index }}</span>
+                    <router-link :to="`/details/${pokemon.index}`">{{ pokemon.name }}</router-link>
+                    
+                    </li>
+                </ul>
+            </div>
+            <div class="col-span-5">
+                <router-view></router-view>
+            </div>
+        </div>
         
-        <ul>
-            <li v-for="pokemon in pokemons" :key="pokemon.index"
-            class ="p-2 rounded hover:text-red-400 hover:bg-red-100"
-            >
-                <router-link :to="`/details/${pokemon.index}`">{{ pokemon.name }}</router-link>
-                #{{ pokemon.index }}
-            </li>
-        </ul>
+       
 
     </div>
 
