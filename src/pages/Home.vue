@@ -57,7 +57,7 @@ try {
                 v-model="name"
                 >
                 
-                <ul>
+                <ul class="overflow-y-auto max-h-96">
                     <li v-for="pokemon in filterPokemon" :key="pokemon.index"
                     class ="p-2 rounded hover:text-red-400 hover:bg-red-100"
                     >
